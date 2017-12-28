@@ -14,6 +14,6 @@ for f in `ls | grep rockspec`; do
 done
 
 # record installed plugin for later use
-echo "Installed Custom Plugins : $installed"
+echo "Installed Custom Plugins: $installed"
 echo $installed >> $KONG_INSTALLED_CUSTOM_PLUGINS_LIST
 

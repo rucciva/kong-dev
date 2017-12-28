@@ -86,18 +86,24 @@ RUN apt-get install -y sudo &&\
 	chmod +x /tmp/zerobrane/zerobrane.sh &&\
 	/tmp/zerobrane/zerobrane.sh
 
-
 # final preparation
 ENV PATH $PATH:/usr/local/bin:/usr/local/openresty/bin:/opt/stap/bin:/usr/local/stapxx:/usr/local/openresty/nginx/sbin
 ENV KONG_LOG_LEVEL debug
-ENV KONG_NGINX_WORKER_PROCESSES 2
+ENV KONG_PROXY_ACCESS_LOG /proc/1/fd/1
+ENV KONG_PROXY_ERROR_LOG /proc/1/fd/2
+ENV KONG_ADMIN_ACCESS_LOG /proc/1/fd/2
+ENV KONG_ADMIN_ERROR_LOG /proc/1/fd/2
 ENV KONG_PREFIX /prefix
-ENV	KONG_ADMIN_LISTEN 0.0.0.0:8001
-ENV KONG_ADMIN_LISTEN_SSL 0.0.0.0:8444
+ENV KONG_CUSTOM_PLUGINS mobdebug
+
 ENV KONG_LUA_PATH /usr/local/share/lua
 ENV KONG_LUA_VERSION 5.1
 ENV KONG_TEMP_DIRECTORY /tmp/kong
 ENV KONG_INSTALLED_CUSTOM_PLUGINS_LIST /installed-plugins
+ENV MOBDEBUG_SERVER localhost
+ENV MOBDEBUG_CONTEXT access
+ENV MOBDEBUG_ADD_LUA_PATH /opt/zbstudio/lualibs/?/?.lua;/opt/zbstudio/lualibs/?.lua
+ENV MOBDEBUG_ADD_LUA_CPATH /opt/zbstudio/linux/x86/?.so;/opt/zbstudio/bin/linux/x86/clibs/?.so
 
 COPY ./assets /
 RUN chmod +x /entrypoint.sh  &&\
