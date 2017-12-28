@@ -106,10 +106,8 @@ RUN chmod +x /entrypoint.sh  &&\
 # install plugin and move lua to temporary directory. 
 # the /entrypoint.sh will sync the temporary directory to the mounted-volume so that all of its content will be available to host system for debugging purpose
 ONBUILD ENV KONG_TEMP_PLUGIN_DIRECTORY ${KONG_TEMP_DIRECTORY}/plugins
-ONBUILD ARG KONG_DEV_PLUGIN_NAME
-ONBUILD ENV KONG_DEV_PLUGIN_NAME ${KONG_DEV_PLUGIN_NAME}
-ONBUILD COPY . ${KONG_TEMP_PLUGIN_DIRECTORY}/${KONG_DEV_PLUGIN_NAME}
-ONBUILD RUN /install-plugins.sh &&\
+ONBUILD COPY . ${KONG_TEMP_PLUGIN_DIRECTORY}
+ONBUILD RUN /install-plugins.sh 1>&2 &&\
 	mv ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template
 
 # finalization
