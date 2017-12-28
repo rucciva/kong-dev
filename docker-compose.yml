@@ -1,0 +1,5 @@
+version: "3.4"
+services:
+  kong:
+    build: .
+    image: rucciva/kong-dev-onbuild:0.0.1
