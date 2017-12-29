@@ -1,7 +1,9 @@
-# Hi
+# Docker Kong Mobdebug
 
-Docker Onbuild images to help debugging kong plugin.
+Docker Onbuild image to help debugging kong plugin using mobdebug bundled with Zerobrane Studio based on [kong-vagrant](https://github.com/Mashape/kong-vagrant) and [this awesome tutorial](http://lua-programming.blogspot.co.id/2015/12/how-to-debug-kong-plugins-on-windows.html)
 
+This images was designed to work with the `kong-plugin` [development template](https://git.rucciva.one/rucciva/kong-plugin). Please
+checkout that repos as a template to start your kong's plugin development.
 
 ## Preparation
 
@@ -20,16 +22,17 @@ curl -i -X POST \
 curl -i -X POST \
   --url http://localhost:8001/apis/mockbin/plugins/ \
   --data 'name=mobdebug'
-# try the API
+# add your plugin
+# try the mockbin API
 curl -i http://localhost:8000
 ```
 
 ## Debugging via zerobrane
 
-choose "Project" > "Project Directory" > "choose" and poin the project directory to ./volumes/kong/kong/lua/5.1
-choose "Project" > "Start Debugger Server"
-invoke the mockbin API
+*Assuming you mount **$KONG_LUA_PATH/$KONG_LUA_VERSION** container path into **./volumes/kong/usr/local/share/lua/5.1**,*
 
-## Debugging other plugin
+1. Click "Project" > "Project Directory" > "choose" and poin the project directory to ***./volumes/kong/usr/local/share/lua/5.1***.
 
-mount yout plugin into /tmp/kong, install it, add the plugin name into KONG_CUSTOM_PLUGINS environment variables in docker-compose.yml, and then recreate kong container.
+1. Click "Project" > "Start Debugger Server"
+
+1. Invoke the mockbin API
