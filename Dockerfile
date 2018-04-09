@@ -58,8 +58,8 @@ RUN apt-get install -y \
 
 # install kong and prepare development environment
 ARG KONG_VERSION
-ENV KONG_VERSION ${KONG_VERSION:-0.11.2}
-ENV KONG_PATH /kong 
+ENV KONG_VERSION ${KONG_VERSION:-0.13.0}
+ENV KONG_SRC_PATH /usr/local/src/kong 
 RUN echo "Fetching and installing Kong..." &&\
 	set +o errexit &&\
 	wget -q -O kong.deb "https://bintray.com/kong/kong-community-edition-deb/download_file?file_path=dists%2Fkong-community-edition-${KONG_VERSION}.trusty.all.deb" &&\
@@ -72,8 +72,8 @@ RUN echo "Fetching and installing Kong..." &&\
 	set -o errexit &&\
 	dpkg -i kong.deb &&\
 	rm kong.deb &&\
-	git clone https://github.com/Kong/kong $KONG_PATH &&\
-	cd $KONG_PATH &&\
+	git clone https://github.com/Kong/kong $KONG_SRC_PATH &&\
+	cd $KONG_SRC_PATH &&\
 	git checkout ${KONG_VERSION} &&\
 	make dev
 
@@ -113,11 +113,12 @@ RUN chmod +x /entrypoint.sh  &&\
 # the /entrypoint.sh will sync the temporary directory to the mounted-volume so that all of its content will be available to host system for debugging purpose
 ONBUILD ENV KONG_TEMP_PLUGIN_DIRECTORY ${KONG_TEMP_DIRECTORY}/plugins
 ONBUILD COPY . ${KONG_TEMP_PLUGIN_DIRECTORY}
+ONBUILD COPY . ${KONG_SRC_PATH}
 ONBUILD RUN /install-plugins.sh 1>&2 &&\
 	mv ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template
 
 # finalization
-ONBUILD VOLUME ${KONG_LUA_PATH}/${KONG_LUA_VERSION} $KONG_PREFIX $KONG_TEMP_DIRECTORY
+ONBUILD VOLUME ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_PREFIX}
 ONBUILD EXPOSE 8000 8443 8001 8444
 ONBUILD WORKDIR ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
 ONBUILD ENTRYPOINT ["/entrypoint.sh" ]
