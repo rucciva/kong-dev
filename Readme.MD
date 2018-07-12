@@ -4,3 +4,8 @@ Docker Onbuild image to help build kong plugin. It includes mobdebug bundled wit
 
 This images was designed to work with the `kong-plugin` [development template](https://git.rucciva.one/rucciva/kong-plugin). Please
 checkout that repos as a template to start your kong's plugin development.
+
+## Version
+
+1. kong = 0.14.0
+1. zerobrane = 1.70
