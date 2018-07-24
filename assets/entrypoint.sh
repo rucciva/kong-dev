@@ -14,7 +14,7 @@ cp /etc/kong/kong.conf.default ${KONG_LUA_PATH}/${KONG_LUA_VERSION}/bin/kong.con
 
 # automatically add installed plugin in environment
 if [ -f $KONG_INSTALLED_CUSTOM_PLUGINS_LIST ]; then
-    export KONG_CUSTOM_PLUGINS="$(cat $KONG_INSTALLED_CUSTOM_PLUGINS_LIST)"
+    export KONG_PLUGINS="$(cat $KONG_INSTALLED_CUSTOM_PLUGINS_LIST)"
 fi
 
 # configure testing environment
