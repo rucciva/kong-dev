@@ -56,6 +56,15 @@ RUN apt-get install -y \
 		make &&\
 		cp ./wrk /usr/local/bin/ 
 
+# install zerobrane
+ARG ZEROBRANE_VERSION 
+ENV ZEROBRANE_VERSION ${ZEROBRANE_VERSION:-1.70}
+RUN apt-get install -y sudo &&\
+	mkdir -p /tmp/zerobrane/ &&\
+	curl https://download.zerobrane.com/ZeroBraneStudioEduPack-${ZEROBRANE_VERSION}-linux.sh -o /tmp/zerobrane/zerobrane.sh &&\
+	chmod +x /tmp/zerobrane/zerobrane.sh &&\
+	/tmp/zerobrane/zerobrane.sh
+
 # install kong and prepare development environment
 ARG KONG_VERSION
 ENV KONG_VERSION ${KONG_VERSION:-0.13.0}
@@ -76,15 +85,6 @@ RUN echo "Fetching and installing Kong..." &&\
 	cd $KONG_SRC_PATH &&\
 	git checkout ${KONG_VERSION} &&\
 	make dev
-
-# install zerobrane
-ARG ZEROBRANE_VERSION 
-ENV ZEROBRANE_VERSION ${ZEROBRANE_VERSION:-1.70}
-RUN apt-get install -y sudo &&\
-	mkdir -p /tmp/zerobrane/ &&\
-	curl https://download.zerobrane.com/ZeroBraneStudioEduPack-${ZEROBRANE_VERSION}-linux.sh -o /tmp/zerobrane/zerobrane.sh &&\
-	chmod +x /tmp/zerobrane/zerobrane.sh &&\
-	/tmp/zerobrane/zerobrane.sh
 
 # final preparation
 ENV PATH $PATH:/usr/local/bin:/usr/local/openresty/bin:/opt/stap/bin:/usr/local/stapxx:/usr/local/openresty/nginx/sbin
