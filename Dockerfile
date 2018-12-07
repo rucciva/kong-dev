@@ -107,18 +107,19 @@ ENV MOBDEBUG_ADD_LUA_CPATH /opt/zbstudio/linux/x86/?.so;/opt/zbstudio/bin/linux/
 COPY ./assets /
 RUN chmod +x /entrypoint.sh  &&\
 	chmod +x /install-plugins.sh && \
-	mv ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template &&\
-	ln -s ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template/ ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
+	mv ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template
 
 ENTRYPOINT ["/entrypoint.sh" ]
 
 # install plugin and move lua to temporary directory. 
 # the /entrypoint.sh will sync the temporary directory to the mounted-volume so that all of its content will be available to host system for debugging purpose
+ONBUILD RUN ln -s ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template/ ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
 ONBUILD ENV KONG_TEMP_PLUGIN_DIRECTORY ${KONG_TEMP_DIRECTORY}/plugins
 ONBUILD COPY . ${KONG_TEMP_PLUGIN_DIRECTORY}
 ONBUILD COPY ./kong/plugins ${KONG_SRC_PATH}/kong/plugins
 ONBUILD COPY ./spec ${KONG_SRC_PATH}/spec
 ONBUILD RUN /install-plugins.sh 1>&2
+ONBUILD RUN rm ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
 
 # finalization
 ONBUILD VOLUME ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_PREFIX}

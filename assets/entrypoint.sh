@@ -2,19 +2,22 @@
 
 set -e
 
+######################################################
 # prepare mountable lua folder for debugging purpose
+######################################################
+if [ ! -d "${KONG_LUA_PATH}/${KONG_LUA_VERSION}" ]; then
+    # no mounted directory, just create symbolik link
+    rm -f "${KONG_LUA_PATH}/${KONG_LUA_VERSION}"
+    ln -s ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template/ ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
+fi 
 rsync -a ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template/ ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
-if [ ${KONG_LUA_PATH} != "/usr/local/share/lua" ]; then
-    rm -f ${KONG_LUA_PATH}/${KONG_LUA_VERSION}
-    ln -s ${KONG_LUA_PATH}/${KONG_LUA_VERSION} /usr/local/share/lua 
-fi
 mkdir -p ${KONG_LUA_PATH}/${KONG_LUA_VERSION}/bin/ 
 cp /usr/local/bin/kong ${KONG_LUA_PATH}/${KONG_LUA_VERSION}/bin/kong 
 cp /etc/kong/kong.conf.default ${KONG_LUA_PATH}/${KONG_LUA_VERSION}/bin/kong.conf
 
 # automatically add installed plugin in environment
 if [ -f $KONG_INSTALLED_CUSTOM_PLUGINS_LIST ]; then
-    export KONG_PLUGINS="$(cat $KONG_INSTALLED_CUSTOM_PLUGINS_LIST)"
+    export KONG_PLUGINS="$(cat $KONcG_INSTALLED_CUSTOM_PLUGINS_LIST)"
 fi
 
 # configure testing environment
