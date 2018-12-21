@@ -3,6 +3,4 @@ services:
   kong:
     build: 
       context: .
-      args:
-        - KONG_VERSION=0.14.1
-    image: rucciva/kong-dev-onbuild:0.14.1
+    image: rucciva/kong-dev-onbuild:1.0.0
