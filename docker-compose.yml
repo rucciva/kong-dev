@@ -3,4 +3,4 @@ services:
   kong:
     build: 
       context: .
-    image: rucciva/kong-dev-onbuild:1.0.0
+    image: rucciva/kong-dev-onbuild:1.1.1

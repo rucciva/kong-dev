@@ -67,7 +67,7 @@ RUN apt-get install -y sudo &&\
 
 # install kong and prepare development environment
 ARG KONG_VERSION
-ENV KONG_VERSION ${KONG_VERSION:-1.0.0}
+ENV KONG_VERSION ${KONG_VERSION:-1.1.1}
 ENV KONG_SRC_PATH /usr/local/src/kong 
 RUN echo "Fetching and installing Kong..." &&\
 	set +o errexit &&\
