@@ -71,7 +71,7 @@ ENV KONG_VERSION ${KONG_VERSION:-1.1.1}
 ENV KONG_SRC_PATH /usr/local/src/kong 
 RUN echo "Fetching and installing Kong..." &&\
 	set +o errexit &&\
-	wget -q -O kong.deb "https://bintray.com/kong/kong-community-edition-deb/download_file?file_path=dists%2Fkong-community-edition-${KONG_VERSION}.trusty.all.deb" &&\
+	wget -q -O kong.deb "https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.xenial.all.deb" &&\
 	if [ ! $? -eq 0 ];  then \
   		# 0.10.3 and earlier are on Github
   		echo "failed downloading from BinTray, trying Github..." &&\
