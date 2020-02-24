@@ -1,64 +1,36 @@
-FROM ubuntu:16.04
-
+FROM ubuntu:18.04
 # docker images for debugging kong plugin
 # based on http://lua-programming.blogspot.co.id/2015/12/how-to-debug-kong-plugins-on-windows.html and https://github.com/Kong/kong-vagrant
 
+# global dependency
 RUN apt-get update &&\
 	apt-get install -y \
-		git \
-		curl \
-		make \
-		pkg-config \
-		unzip \
-		libpcre3-dev \
-		apt-transport-https \
-		language-pack-en \
-		wget \
-		netcat \
-		openssl \
-		libpcre3 \
-		dnsmasq \
-		procps \
-		perl 
-
-# fix locale warning
-ENV LC_ALL en_US.UTF-8
-ENV LC_CTYPE en_US.UTF-8
-RUN echo "LC_CTYPE=\"$LC_ALL\"" >> /etc/default/locale &&\
- 	echo "LC_ALL=\"$LC_CTYPE\"" >> /etc/default/locale
-
-# install systemtap
-# https://openresty.org/en/build-systemtap.html
-RUN apt-get install -y \
-		build-essential \
-		zlib1g-dev \
-		elfutils \
-		libdw-dev \
-		gettext &&\
-  	wget -q http://sourceware.org/systemtap/ftp/releases/systemtap-3.0.tar.gz &&\
-  	tar -xf systemtap-3.0.tar.gz &&\
-  	cd systemtap-3.0/ &&\
-  	./configure \
-	  	--prefix=/opt/stap \
-		--disable-docs \
-        --disable-publican \
-		--disable-refdocs \
-		CFLAGS="-g -O2" &&\
-  	make &&\
-  	make install &&\
-  	rm -rf ./systemtap-3.0 systemtap-3.0.tar.gz &&\
-	cd /usr/local &&\
-	git clone https://github.com/openresty/stapxx.git &&\
-  	git clone https://github.com/openresty/openresty-systemtap-toolkit.git &&\
-  	git clone https://github.com/brendangregg/FlameGraph.git &&\
-  	git clone https://github.com/wg/wrk.git &&\
-  		cd wrk &&\
-		make &&\
-		cp ./wrk /usr/local/bin/ 
+	git \
+	curl \
+	make \
+	pkg-config \
+	unzip \
+	libpcre3-dev \
+	apt-transport-https \
+	language-pack-en \
+	wget \
+	netcat \
+	openssl \
+	libpcre3 \
+	dnsmasq \
+	procps \
+	perl \
+	iptables \
+	libcap2-bin \
+	nmap \
+	libssl-dev \
+	m4 \
+	cpanminus \
+	rsync
 
 # install zerobrane
 ARG ZEROBRANE_VERSION 
-ENV ZEROBRANE_VERSION ${ZEROBRANE_VERSION:-1.70}
+ENV ZEROBRANE_VERSION ${ZEROBRANE_VERSION:-1.90}
 RUN apt-get install -y sudo &&\
 	mkdir -p /tmp/zerobrane/ &&\
 	curl https://download.zerobrane.com/ZeroBraneStudioEduPack-${ZEROBRANE_VERSION}-linux.sh -o /tmp/zerobrane/zerobrane.sh &&\
@@ -67,17 +39,11 @@ RUN apt-get install -y sudo &&\
 
 # install kong and prepare development environment
 ARG KONG_VERSION
-ENV KONG_VERSION ${KONG_VERSION:-1.1.1}
+ENV KONG_VERSION ${KONG_VERSION:-2.0.0}
 ENV KONG_SRC_PATH /usr/local/src/kong 
 RUN echo "Fetching and installing Kong..." &&\
 	set +o errexit &&\
-	wget -q -O kong.deb "https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.xenial.all.deb" &&\
-	if [ ! $? -eq 0 ];  then \
-  		# 0.10.3 and earlier are on Github
-  		echo "failed downloading from BinTray, trying Github..." &&\
-  		set -o errexit &&\
-  		wget -q -O kong.deb https://github.com/Kong/kong/releases/download/$KONG_VERSION/kong-$KONG_VERSION.precise_all.deb; \
-	fi &&\
+	wget -q -O kong.deb https://bintray.com/kong/kong-deb/download_file?file_path=kong-${KONG_VERSION}.bionic.amd64.deb &&\
 	set -o errexit &&\
 	dpkg -i kong.deb &&\
 	rm kong.deb &&\
@@ -112,6 +78,13 @@ RUN chmod +x /entrypoint.sh  &&\
 	mv ${KONG_LUA_PATH}/${KONG_LUA_VERSION} ${KONG_LUA_PATH}/${KONG_LUA_VERSION}-template
 
 ENTRYPOINT ["/entrypoint.sh" ]
+
+
+# fix locale warning
+ENV LC_ALL en_US.UTF-8
+ENV LC_CTYPE en_US.UTF-8
+RUN echo "LC_CTYPE=\"$LC_ALL\"" >> /etc/default/locale &&\
+	echo "LC_ALL=\"$LC_CTYPE\"" >> /etc/default/locale
 
 # install plugin and move lua to temporary directory. 
 # the /entrypoint.sh will sync the temporary directory to the mounted-volume so that all of its content will be available to host system for debugging purpose
