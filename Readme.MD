@@ -7,5 +7,5 @@ checkout that repos as a template to start your kong's plugin development.
 
 ## Version
 
-1. kong = 0.14.0
+1. kong = 2.1.4
 1. zerobrane = 1.70

@@ -26,7 +26,8 @@ RUN apt-get update &&\
 	libssl-dev \
 	m4 \
 	cpanminus \
-	rsync
+	rsync \
+	zlib1g-dev 
 
 # install zerobrane
 ARG ZEROBRANE_VERSION 
