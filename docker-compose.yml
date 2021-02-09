@@ -5,4 +5,4 @@ services:
       context: .
       args:
         - KONG_VERSION=2.3.1
-    image: rucciva/kong-dev-onbuild:2.3.1
+    image: rucciva/kong-dev:2.3.1-onbuild
