@@ -38,6 +38,15 @@ RUN apt-get install -y sudo &&\
 	chmod +x /tmp/zerobrane/zerobrane.sh &&\
 	/tmp/zerobrane/zerobrane.sh
 
+# install go
+RUN cd /usr/local \
+	&& wget -q -O go.tar.gz https://golang.org/dl/go1.15.5.linux-amd64.tar.gz \
+	&& tar -xf go.tar.gz \
+	&& rm go.tar.gz
+
+# adjust env
+ENV PATH /usr/local/bin:/usr/local/openresty/bin:/opt/stap/bin:/usr/local/stapxx:/usr/local/openresty/nginx/sbin:/usr/local/openresty/luajit/bin:/usr/local/go/bin:$PATH:
+
 # install kong and prepare development environment
 ARG KONG_VERSION
 ENV KONG_VERSION ${KONG_VERSION:-2.0.0}
@@ -54,7 +63,6 @@ RUN echo "Fetching and installing Kong..." &&\
 	make dev
 
 # final preparation
-ENV PATH $PATH:/usr/local/bin:/usr/local/openresty/bin:/opt/stap/bin:/usr/local/stapxx:/usr/local/openresty/nginx/sbin
 ENV KONG_LOG_LEVEL debug
 ENV KONG_PROXY_ACCESS_LOG /proc/1/fd/1
 ENV KONG_PROXY_ERROR_LOG /proc/1/fd/2
