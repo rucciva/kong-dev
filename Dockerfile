@@ -27,7 +27,8 @@ RUN apt-get update &&\
 	m4 \
 	cpanminus \
 	rsync \
-	zlib1g-dev 
+	zlib1g-dev \
+	zip 
 
 # install zerobrane
 ARG ZEROBRANE_VERSION 
